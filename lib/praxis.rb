@@ -44,7 +44,6 @@ module Praxis
   autoload :Stage, 'praxis/stage'
   autoload :Trait, 'praxis/trait'
 
-  autoload :Stats, 'praxis/stats'
   autoload :Notifications, 'praxis/notifications'
   autoload :MiddlewareApp, 'praxis/middleware_app'
 
@@ -90,6 +89,7 @@ module Praxis
     autoload :MapperSelectors, 'praxis/extensions/mapper_selectors'
     autoload :Rendering, 'praxis/extensions/rendering'
     autoload :FieldExpansion, 'praxis/extensions/field_expansion'
+    autoload :AttributeFiltering, 'praxis/extensions/attribute_filtering'
   end
 
   module Handlers
@@ -123,10 +123,11 @@ module Praxis
     autoload :Response, 'praxis/request_stages/response'
   end
 
-  # Avoid loading responses (and templates) lazily as they need to be registered in time
-  require 'praxis/responses/http'
-  require 'praxis/responses/internal_server_error'
-  require 'praxis/responses/validation_error'
-  require 'praxis/responses/multipart_ok'
+  # # Avoid loading responses (and templates) lazily as they need to be registered in time
+  # ... now done in Praxis initialize
+  # require 'praxis/responses/http'
+  # require 'praxis/responses/internal_server_error'
+  # require 'praxis/responses/validation_error'
+  # require 'praxis/responses/multipart_ok'
 
 end

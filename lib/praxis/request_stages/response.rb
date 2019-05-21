@@ -8,8 +8,9 @@ module Praxis
 
         response.handle
 
-        if Application.instance.config.praxis.validate_responses == true
-          validate_body = Application.instance.config.praxis.validate_response_bodies
+        config = Application.current_instance.config
+        if config.praxis.validate_responses == true
+          validate_body = config.praxis.validate_response_bodies
 
           response.validate(action, validate_body: validate_body)
         end

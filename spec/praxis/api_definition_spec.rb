@@ -2,12 +2,18 @@ require 'spec_helper'
 
 describe Praxis::ApiDefinition do
 
-  subject(:api){  Praxis::ApiDefinition.instance }
+  # TODO: perhaps grab the spec app instance from some global var...(instead of relying on the singleton compat method)
+  subject(:api){ Praxis::ApiDefinition.instance } 
 
   # Without getting a fresh new ApiDefinition it is very difficult to test stuff using the Singleton
   # So for some tests we're gonna create a new instance and work with it to avoid the singleton issues
+  let(:app_instance){ double("AppInstance") }
+  before do
+    allow(app_instance).to receive(:versioning_scheme=).with([:header, :params])
+  end
+  
   let(:non_singleton_api) do
-    api_def=Praxis::ApiDefinition.__send__(:new)
+    api_def=Praxis::ApiDefinition.new(app_instance)
     api_def.instance_eval do |api|
       api.response_template :template1, &Proc.new {}
       api.trait :trait1, &Proc.new {}
@@ -32,12 +38,7 @@ describe Praxis::ApiDefinition do
     end
   end
 
-  context 'singleton' do
-    it 'should be a Singleton' do
-      expect(Praxis::ApiDefinition.ancestors).to include( Singleton )
-      expect(subject).to eq(Praxis::ApiDefinition.instance )
-    end
-
+  context 'initial definition' do
     it 'has the :ok and :created response templates registered' do
       expect(api.responses.keys).to include(:ok)
       expect(api.responses.keys).to include(:created)
@@ -57,6 +58,10 @@ describe Praxis::ApiDefinition do
       api.response_template :foobar, &response_template
       expect(api.responses.keys).to include(:foobar)
       expect(api.response(:foobar)).to be_kind_of(Praxis::ResponseTemplate)
+    end
+    it 'stores the app instance' do
+      template = api.response(:template1)
+      expect(template.application).to be(app_instance)
     end
   end
 

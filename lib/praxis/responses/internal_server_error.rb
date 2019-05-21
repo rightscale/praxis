@@ -13,16 +13,15 @@ module Praxis
         @error = error
       end
 
-      def format!(exception = @error)
+      def format!(exception = @error, config:)
         if @error
-
-          if Application.instance.config.praxis.show_exceptions == true
+          if config.praxis.show_exceptions == true
             msg = {
               name: exception.class.name,
               message: exception.message,
               backtrace: exception.backtrace
             }
-            msg[:cause] = format!(exception.cause) if exception.cause
+            msg[:cause] = format!(exception.cause, config: config) if exception.cause
           else
             msg = {name: 'InternalServerError', message: "Something bad happened."}
           end
@@ -32,14 +31,6 @@ module Praxis
       end
     end
 
-  end
-
-  ApiDefinition.define do |api|
-    api.response_template :internal_server_error do
-      description "A generic error message, given when an unexpected condition was encountered and no more specific message is suitable."
-      status 500
-      media_type "application/json"
-    end
   end
 
 end

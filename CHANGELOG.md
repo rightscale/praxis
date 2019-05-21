@@ -23,6 +23,7 @@
   * Added requirements for parameters as well (in addition to payload)
   * format member_options display better
 * Make `MiddleWareApp` initialize lazily. This allows the main rack app (i.e., Rails) to be fully initialized by the time any code in the Praxis middleware gets touched (i.e., full ActiveRecord connection initialization...etc.)
+* Removed 'Stats' plugin
 
 ## 0.21
 

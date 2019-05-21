@@ -1,15 +1,15 @@
 module Praxis
   class ErrorHandler
-
-    def handle!(request, error)
-      Application.instance.logger.error error.inspect
+    
+    def handle!(request, error, app:)
+      app.logger.error error.inspect
       error.backtrace.each do |line|
-        Application.instance.logger.error line
+        app.logger.error line
       end
 
       response = Responses::InternalServerError.new(error: error)
       response.request = request
-      response.finish
+      response.finish(application: app)
     end
 
   end

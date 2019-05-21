@@ -28,11 +28,13 @@ module Praxis
       @deferred_callbacks[:after] << [conditions, block]
     end
 
-    def self.current(thread: Thread.current, application: Application.instance)
+    # Typically, this is only called from the router, and the app will always be known.
+    # But we'll leave the application param as optional if we know there is a dispatcher in the thread
+    def self.current(thread: Thread.current, application: nil)
       thread[:praxis_dispatcher] ||= self.new(application: application)
     end
 
-    def initialize(application: Application.instance)
+    def initialize(application:)
       @stages = []
       @application = application
       setup_stages!
@@ -104,9 +106,9 @@ module Praxis
           response_stage.run
 
           payload[:response] = controller.response
-          controller.response.finish
+          controller.response.finish(application: application)
         rescue => e
-          @application.error_handler.handle!(request, e)
+          @application.error_handler.handle!(request, e, app: application)
         end
       end
     end
